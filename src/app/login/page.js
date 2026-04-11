@@ -42,7 +42,7 @@ export default function LoginPage() {
       body: JSON.stringify(form)
     });
     const data = await res.json();
-    if (res.ok) { router.push('/'); router.refresh(); }
+    if (res.ok) { window.location.href = '/'; return; }
     else { setError(data.error || 'Error al iniciar sesión'); }
     setLoad(false);
   };

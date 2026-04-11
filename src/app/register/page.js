@@ -43,7 +43,7 @@ export default function RegisterPage() {
       body: JSON.stringify(form)
     });
     const data = await res.json();
-    if (res.ok) { router.push('/'); router.refresh(); }
+    if (res.ok) { window.location.href = '/'; return; }
     else { setError(data.error || 'Error al crear la cuenta'); }
     setLoad(false);
   };
