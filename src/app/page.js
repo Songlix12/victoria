@@ -314,12 +314,13 @@ function TabContent({ activeTab, user, poems, loading }) {
   return null;
 }
 
-/* ── MAIN PAGE (con pestañas en la barra de navegación) ── */
+/* ── MAIN PAGE (héroe solo en inicio, tabs muestran contenido) ── */
 export default function HomePage() {
   const [user, setUser]    = useState(null);
   const [poems, setPoems]  = useState([]);
   const [loading, setLoad] = useState(true);
-  const [activeTab, setActiveTab] = useState('cartas');
+  const [activeTab, setActiveTab] = useState(null); // null = mostrar héroe
+  const [showHero, setShowHero] = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -346,6 +347,18 @@ export default function HomePage() {
     window.location.href = '/';
   };
 
+  // Manejador para cambiar de pestaña
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    setShowHero(false);
+  };
+
+  // Volver al héroe (al hacer clic en el logo)
+  const goToHero = () => {
+    setActiveTab(null);
+    setShowHero(true);
+  };
+
   return (
     <>
       <div className="bg-luxury" />
@@ -354,12 +367,14 @@ export default function HomePage() {
 
       {/* Barra de navegación con logo, pestañas y botones de usuario */}
       <nav className="luxury-nav">
-        <a href="/" className="nav-logo">Victoria</a>
+        <button onClick={goToHero} className="nav-logo" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+          Victoria
+        </button>
 
         {/* Pestañas de navegación integradas */}
         <div style={{ display: 'flex', gap: '1.5rem', marginLeft: 'auto', marginRight: '1rem' }}>
           <button
-            onClick={() => setActiveTab('cartas')}
+            onClick={() => handleTabClick('cartas')}
             style={{
               background: 'transparent',
               border: 'none',
@@ -377,7 +392,7 @@ export default function HomePage() {
             📜 Cartas
           </button>
           <button
-            onClick={() => setActiveTab('girasoles')}
+            onClick={() => handleTabClick('girasoles')}
             style={{
               background: 'transparent',
               border: 'none',
@@ -395,7 +410,7 @@ export default function HomePage() {
             🌻 Girasoles
           </button>
           <button
-            onClick={() => setActiveTab('poema')}
+            onClick={() => handleTabClick('poema')}
             style={{
               background: 'transparent',
               border: 'none',
@@ -435,28 +450,32 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero centrado */}
       <div className="page-content" style={{ paddingTop: '80px' }}>
-        <section style={{ textAlign:'center', padding:'clamp(40px,6vw,70px) 20px clamp(30px,4vw,50px)' }}>
-          <p className="font-cinzel text-xs tracking-[4px] text-crimson-soft mb-3">✦ UN ESPACIO DE AMOR ✦</p>
-          <h1 className="hero-title">Victoria</h1>
-          <div className="divider-gold my-4"><span>♥</span></div>
-          <p className="font-cormorant text-xl italic text-cream-dim max-w-xl mx-auto leading-relaxed">
-            Cada carta guarda un sentimiento.<br />
-            Ábrelas y encuentra lo que el corazón escribe.
-          </p>
-          {!user && (
-            <div className="flex gap-3 justify-center mt-6">
-              <a href="/register"><button className="btn-gold text-sm py-2 px-5">Crear mi cuenta</button></a>
-              <a href="/login"><button className="btn-ghost text-sm py-2 px-5">Ya tengo cuenta</button></a>
-            </div>
-          )}
-        </section>
+        {/* Hero: solo se muestra si showHero es true */}
+        {showHero && (
+          <section style={{ textAlign:'center', padding:'clamp(40px,6vw,70px) 20px clamp(30px,4vw,50px)' }}>
+            <p className="font-cinzel text-xs tracking-[4px] text-crimson-soft mb-3">✦ UN ESPACIO DE AMOR ✦</p>
+            <h1 className="hero-title">Victoria</h1>
+            <div className="divider-gold my-4"><span>♥</span></div>
+            <p className="font-cormorant text-xl italic text-cream-dim max-w-xl mx-auto leading-relaxed">
+              Cada carta guarda un sentimiento.<br />
+              Ábrelas y encuentra lo que el corazón escribe.
+            </p>
+            {!user && (
+              <div className="flex gap-3 justify-center mt-6">
+                <a href="/register"><button className="btn-gold text-sm py-2 px-5">Crear mi cuenta</button></a>
+                <a href="/login"><button className="btn-ghost text-sm py-2 px-5">Ya tengo cuenta</button></a>
+              </div>
+            )}
+          </section>
+        )}
 
-        {/* Contenido dinámico según la pestaña activa */}
-        <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px 70px' }}>
-          <TabContent activeTab={activeTab} user={user} poems={poems} loading={loading} />
-        </section>
+        {/* Contenido dinámico según la pestaña activa (solo si hay una pestaña seleccionada) */}
+        {activeTab && (
+          <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px 70px' }}>
+            <TabContent activeTab={activeTab} user={user} poems={poems} loading={loading} />
+          </section>
+        )}
 
         <footer className="text-center py-6 border-t border-gold-border">
           <p className="font-cormorant text-sm italic text-cream-muted">
