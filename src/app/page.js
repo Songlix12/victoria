@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { authFetch, clearToken, loadToken } from '@/lib/client-auth';
+import { authFetch, clearToken } from '@/lib/client-auth';
 
-/* ── Ambient particles ─────────────────────────── */
+/* ── Ambient particles ── */
 function AmbientParticles() {
   const golds = ['#c9943a','#e2b55a','#f0cc7a','#d4a843'];
   return (
@@ -31,7 +31,7 @@ function AmbientParticles() {
   );
 }
 
-/* ── Comment section ───────────────────────────── */
+/* ── Comment section ── */
 function CommentSection({ poemId, user }) {
   const [comments, setComments] = useState([]);
   const [text, setText]         = useState('');
@@ -60,53 +60,51 @@ function CommentSection({ poemId, user }) {
   };
 
   return (
-    <div style={{ marginTop:'24px', paddingTop:'20px', borderTop:'1px solid rgba(201,148,58,0.12)' }}>
-      <p style={{ fontFamily:'Cinzel,serif', fontSize:'10px', letterSpacing:'2px',
-        textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'14px' }}>
+    <div style={{ marginTop:'20px', paddingTop:'16px', borderTop:'1px solid rgba(201,148,58,0.12)' }}>
+      <p style={{ fontFamily:'Cinzel,serif', fontSize:'9px', letterSpacing:'2px',
+        textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'12px' }}>
         Tus palabras
       </p>
-
       {loading ? (
-        <p style={{ color:'var(--cream-muted)', fontSize:'14px', fontStyle:'italic' }}>...</p>
+        <p style={{ color:'var(--cream-muted)', fontSize:'13px', fontStyle:'italic' }}>...</p>
       ) : comments.length > 0 ? (
-        <div style={{ display:'flex', flexDirection:'column', gap:'10px', marginBottom:'16px' }}>
+        <div style={{ display:'flex', flexDirection:'column', gap:'8px', marginBottom:'14px' }}>
           {comments.map(c => (
             <div key={c.id} className="comment-item">
-              <div style={{ display:'flex', gap:'10px', alignItems:'baseline', marginBottom:'3px' }}>
-                <span style={{ fontFamily:'Cinzel,serif', fontSize:'11px', color:'var(--gold)', letterSpacing:'1px' }}>
+              <div style={{ display:'flex', gap:'8px', alignItems:'baseline', marginBottom:'2px' }}>
+                <span style={{ fontFamily:'Cinzel,serif', fontSize:'10px', color:'var(--gold)', letterSpacing:'1px' }}>
                   {c.user_name}
                 </span>
-                <span style={{ fontSize:'11px', color:'var(--cream-muted)' }}>
+                <span style={{ fontSize:'10px', color:'var(--cream-muted)' }}>
                   {new Date(c.created_at).toLocaleDateString('es-ES',{day:'numeric',month:'short'})}
                 </span>
               </div>
-              <p style={{ color:'var(--letter-text)', fontSize:'15px', lineHeight:1.6,
+              <p style={{ color:'var(--letter-text)', fontSize:'14px', lineHeight:1.5,
                 fontFamily:'EB Garamond,serif' }}>{c.content}</p>
             </div>
           ))}
         </div>
       ) : (
-        <p style={{ color:'var(--cream-muted)', fontSize:'15px', fontStyle:'italic', marginBottom:'14px' }}>
+        <p style={{ color:'var(--cream-muted)', fontSize:'13px', fontStyle:'italic', marginBottom:'12px' }}>
           Sé la primera en dejar tu huella aquí...
         </p>
       )}
-
       {user ? (
-        <form onSubmit={submit} style={{ display:'flex', gap:'10px', alignItems:'flex-end' }}>
+        <form onSubmit={submit} style={{ display:'flex', gap:'8px', alignItems:'flex-end' }}>
           <div style={{ flex:1 }}>
             <input className="luxury-input" value={text}
               onChange={e => setText(e.target.value)}
               placeholder="Escribe lo que sientes..."
               maxLength={400}
-              style={{ fontSize:'16px', padding:'10px 4px 8px' }} />
+              style={{ fontSize:'14px', padding:'8px 4px 6px' }} />
           </div>
           <button type="submit" disabled={posting || !text.trim()} className="btn-gold"
-            style={{ padding:'10px 18px', fontSize:'11px', whiteSpace:'nowrap' }}>
+            style={{ padding:'8px 14px', fontSize:'10px', whiteSpace:'nowrap' }}>
             {posting ? '...' : 'Enviar'}
           </button>
         </form>
       ) : (
-        <p style={{ fontSize:'14px', color:'var(--cream-muted)', fontStyle:'italic' }}>
+        <p style={{ fontSize:'12px', color:'var(--cream-muted)', fontStyle:'italic' }}>
           <a href="/login" style={{ color:'var(--gold)', textDecoration:'none' }}>Inicia sesión</a> para dejar un mensaje
         </p>
       )}
@@ -114,7 +112,7 @@ function CommentSection({ poemId, user }) {
   );
 }
 
-/* ── Envelope Card ─────────────────────────────── */
+/* ── Envelope Card (más pequeña) ── */
 function EnvelopeCard({ poem, user, delay }) {
   const [opened, setOpened]      = useState(false);
   const [liked, setLiked]        = useState(poem.user_liked);
@@ -139,7 +137,7 @@ function EnvelopeCard({ poem, user, delay }) {
   };
 
   return (
-    <div className="fade-in" style={{ animationDelay:`${delay}s` }}>
+    <div className="fade-in" style={{ animationDelay: `${delay}s` }}>
       {!opened ? (
         <div className="envelope-scene" onClick={() => setOpened(true)} role="button">
           <div className="envelope-body">
@@ -147,21 +145,21 @@ function EnvelopeCard({ poem, user, delay }) {
             <div className="env-flap-bottom" />
             <div className="wax-seal">♥</div>
             <div style={{ textAlign:'center', zIndex:2 }}>
-              <h3 style={{ fontFamily:'Cinzel,serif', fontSize:'clamp(13px,2vw,16px)',
-                letterSpacing:'3px', textTransform:'uppercase',
-                color:'var(--gold-light)', marginBottom:'10px',
-                textShadow:'0 0 12px rgba(201,148,58,0.3)' }}>
+              <h3 style={{ fontFamily:'Cinzel,serif', fontSize:'clamp(12px,1.8vw,14px)',
+                letterSpacing:'2px', textTransform:'uppercase',
+                color:'var(--gold-light)', marginBottom:'6px',
+                textShadow:'0 0 8px rgba(201,148,58,0.3)' }}>
                 {poem.title}
               </h3>
               <p className="envelope-hint">Toca para abrir</p>
             </div>
-            <div style={{ display:'flex', gap:'18px', zIndex:2 }}>
-              <span style={{ fontSize:'13px', color: liked ? '#e07090':'var(--cream-muted)',
-                display:'flex', alignItems:'center', gap:'5px' }}>
+            <div style={{ display:'flex', gap:'14px', zIndex:2, marginTop:'4px' }}>
+              <span style={{ fontSize:'12px', color: liked ? '#e07090':'var(--cream-muted)',
+                display:'flex', alignItems:'center', gap:'4px' }}>
                 {liked ? '❤' : '♡'} {likeCount > 0 ? likeCount : ''}
               </span>
-              <span style={{ fontSize:'13px', color:'var(--cream-muted)',
-                display:'flex', alignItems:'center', gap:'5px' }}>
+              <span style={{ fontSize:'12px', color:'var(--cream-muted)',
+                display:'flex', alignItems:'center', gap:'4px' }}>
                 💬 {Number(poem.comment_count) > 0 ? poem.comment_count : ''}
               </span>
             </div>
@@ -175,46 +173,46 @@ function EnvelopeCard({ poem, user, delay }) {
           <div className="letter-paper">
             <div className="letter-content">
               <button onClick={e => { e.stopPropagation(); setOpened(false); setShowC(false); }} style={{
-                position:'absolute', top:'16px', right:'20px', background:'none',
+                position:'absolute', top:'12px', right:'16px', background:'none',
                 border:'none', cursor:'pointer', color:'var(--cream-muted)',
-                fontSize:'20px', lineHeight:1, zIndex:10, transition:'color 0.2s'
+                fontSize:'18px', lineHeight:1, zIndex:10, transition:'color 0.2s'
               }}
               onMouseEnter={e=>e.currentTarget.style.color='var(--crimson)'}
               onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}>✕</button>
 
-              <div style={{ textAlign:'center', marginBottom:'28px' }}>
-                <p style={{ fontFamily:'Cinzel,serif', fontSize:'10px', letterSpacing:'3px',
-                  textTransform:'uppercase', color:'var(--crimson)', marginBottom:'14px' }}>
+              <div style={{ textAlign:'center', marginBottom:'20px' }}>
+                <p style={{ fontFamily:'Cinzel,serif', fontSize:'9px', letterSpacing:'2px',
+                  textTransform:'uppercase', color:'var(--crimson)', marginBottom:'10px' }}>
                   ✦ Para Victoria ✦
                 </p>
-                <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(22px,4vw,30px)',
+                <h2 style={{ fontFamily:'Playfair Display,serif', fontSize:'clamp(18px,3vw,24px)',
                   fontStyle:'italic', color:'var(--letter-text)', fontWeight:400 }}>
                   {poem.title}
                 </h2>
-                <div style={{ width:'50px', height:'1px', margin:'14px auto 0',
+                <div style={{ width:'40px', height:'1px', margin:'10px auto 0',
                   background:'linear-gradient(90deg,transparent,var(--crimson),transparent)' }} />
               </div>
 
-              <p style={{ fontFamily:'EB Garamond,serif', fontSize:'clamp(17px,2.5vw,20px)',
-                lineHeight:2.05, color:'var(--letter-text)', whiteSpace:'pre-line',
+              <p style={{ fontFamily:'EB Garamond,serif', fontSize:'clamp(15px,2vw,17px)',
+                lineHeight:1.8, color:'var(--letter-text)', whiteSpace:'pre-line',
                 fontStyle:'italic', fontWeight:400, textAlign:'center', letterSpacing:'0.2px' }}>
                 {poem.content}
               </p>
 
               <div style={{ display:'flex', alignItems:'center', justifyContent:'center',
-                gap:'20px', marginTop:'28px', paddingTop:'20px',
+                gap:'16px', marginTop:'24px', paddingTop:'16px',
                 borderTop:'1px solid rgba(139,26,47,0.15)' }}>
                 <button onClick={handleLike} style={{
                   background: liked ? 'rgba(139,26,47,0.1)' : 'transparent',
                   border:'none', cursor:'pointer',
-                  display:'flex', alignItems:'center', gap:'7px',
-                  fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'1.5px',
-                  textTransform:'uppercase', padding:'8px 16px', borderRadius:'1px',
+                  display:'flex', alignItems:'center', gap:'6px',
+                  fontFamily:'Cinzel,serif', fontSize:'10px', letterSpacing:'1px',
+                  textTransform:'uppercase', padding:'6px 12px', borderRadius:'1px',
                   color: liked ? 'var(--crimson)' : 'var(--cream-muted)',
                   transition:'background 0.2s, color 0.2s',
                 }}>
-                  <span style={{ fontSize:'20px', lineHeight:1, display:'inline-block',
-                    transform: animHeart ? 'scale(1.5)' : 'scale(1)',
+                  <span style={{ fontSize:'16px', lineHeight:1, display:'inline-block',
+                    transform: animHeart ? 'scale(1.4)' : 'scale(1)',
                     transition:'transform 0.2s',
                     color: liked ? '#c94060' : 'inherit' }}>
                     {liked ? '❤' : '♡'}
@@ -222,17 +220,17 @@ function EnvelopeCard({ poem, user, delay }) {
                   {likeCount > 0 ? `${likeCount} ` : ''}Me gusta
                 </button>
 
-                <div style={{ width:'1px', height:'20px', background:'rgba(139,26,47,0.2)' }} />
+                <div style={{ width:'1px', height:'16px', background:'rgba(139,26,47,0.2)' }} />
 
                 <button onClick={e => { e.stopPropagation(); setShowC(v => !v); }} style={{
                   background:'none', border:'none', cursor:'pointer',
-                  display:'flex', alignItems:'center', gap:'7px',
-                  fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'1.5px',
-                  textTransform:'uppercase', padding:'8px 16px',
+                  display:'flex', alignItems:'center', gap:'6px',
+                  fontFamily:'Cinzel,serif', fontSize:'10px', letterSpacing:'1px',
+                  textTransform:'uppercase', padding:'6px 12px',
                   color: showComments ? 'var(--gold)' : 'var(--cream-muted)',
                   transition:'color 0.2s',
                 }}>
-                  <span style={{ fontSize:'16px', lineHeight:1 }}>✉</span>
+                  <span style={{ fontSize:'14px', lineHeight:1 }}>✉</span>
                   {showComments ? 'Ocultar' : 'Comentar'}
                 </button>
               </div>
@@ -246,14 +244,30 @@ function EnvelopeCard({ poem, user, delay }) {
   );
 }
 
-/* ── Main page ─────────────────────────────────── */
+/* ── Componente Pestaña bonita (Tab) ── */
+function Pestana() {
+  return (
+    <div className="flex justify-center mb-8">
+      <div className="relative">
+        <div className="flex">
+          <div className="bg-gradient-to-r from-[#1a0e06] to-[#2c1a0c] px-8 py-2 rounded-t-md border-b-0 border-t border-l border-r border-[rgba(201,148,58,0.3)] shadow-lg z-10">
+            <span className="font-cinzel text-[11px] tracking-[3px] text-gold-light uppercase">Cartas de amor</span>
+          </div>
+          <div className="w-12 h-8 bg-gradient-to-tr from-transparent via-[#1a0e06] to-[#1a0e06] rounded-t-md border-b-0 border-t border-r border-[rgba(201,148,58,0.2)] opacity-60"></div>
+        </div>
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent"></div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Main page ── */
 export default function HomePage() {
   const [user, setUser]    = useState(null);
   const [poems, setPoems]  = useState([]);
   const [loading, setLoad] = useState(true);
 
   useEffect(() => {
-    // authFetch sends the Bearer token from localStorage automatically
     Promise.all([
       authFetch('/api/auth/me').then(r => r.json()),
       authFetch('/api/poems').then(r => r.json()),
@@ -273,7 +287,7 @@ export default function HomePage() {
   }, [user]);
 
   const logout = async () => {
-    clearToken();                          // remove from localStorage
+    clearToken();
     await authFetch('/api/auth/logout', { method: 'POST' });
     window.location.href = '/';
   };
@@ -293,18 +307,18 @@ export default function HomePage() {
                 fontStyle:'italic', color:'var(--cream-muted)' }}>{user.name}</span>
               {user.isAdmin && (
                 <a href="/admin" style={{ textDecoration:'none' }}>
-                  <button className="btn-ghost" style={{ padding:'8px 14px', fontSize:'10px' }}>✦ Admin</button>
+                  <button className="btn-ghost" style={{ padding:'6px 12px', fontSize:'9px' }}>✦ Admin</button>
                 </a>
               )}
-              <button onClick={logout} className="btn-ghost" style={{ padding:'8px 14px', fontSize:'10px' }}>Salir</button>
+              <button onClick={logout} className="btn-ghost" style={{ padding:'6px 12px', fontSize:'9px' }}>Salir</button>
             </>
           ) : (
             <>
               <a href="/login" style={{ textDecoration:'none' }}>
-                <button className="btn-ghost" style={{ padding:'8px 16px', fontSize:'10px' }}>Entrar</button>
+                <button className="btn-ghost" style={{ padding:'6px 14px', fontSize:'9px' }}>Entrar</button>
               </a>
               <a href="/register" style={{ textDecoration:'none' }}>
-                <button className="btn-gold" style={{ padding:'8px 18px', fontSize:'10px' }}>Unirme</button>
+                <button className="btn-gold" style={{ padding:'6px 16px', fontSize:'9px' }}>Unirme</button>
               </a>
             </>
           )}
@@ -312,70 +326,66 @@ export default function HomePage() {
       </nav>
 
       <main className="page-content" style={{ paddingTop:'64px' }}>
-        <section style={{ textAlign:'center', padding:'clamp(60px,10vw,110px) 20px clamp(40px,6vw,70px)',
+        {/* Hero */}
+        <section style={{ textAlign:'center', padding:'clamp(50px,8vw,90px) 20px clamp(30px,5vw,50px)',
           position:'relative', overflow:'hidden' }}>
           <div style={{ position:'absolute', top:'50%', left:'50%',
-            transform:'translate(-50%,-50%)', width:'600px', height:'300px',
+            transform:'translate(-50%,-50%)', width:'500px', height:'250px',
             background:'radial-gradient(ellipse, rgba(139,26,47,0.12) 0%, transparent 65%)',
             pointerEvents:'none' }} />
-          <p style={{ fontFamily:'Cinzel,serif', fontSize:'clamp(10px,1.5vw,12px)',
-            letterSpacing:'5px', textTransform:'uppercase',
-            color:'var(--crimson-soft)', marginBottom:'22px' }}>
+          <p style={{ fontFamily:'Cinzel,serif', fontSize:'clamp(9px,1.5vw,11px)',
+            letterSpacing:'4px', textTransform:'uppercase',
+            color:'var(--crimson-soft)', marginBottom:'18px' }}>
             ✦ &nbsp; Un espacio de amor &nbsp; ✦
           </p>
-          <h1 className="hero-title" style={{ marginBottom:'24px' }}>Victoria</h1>
-          <div className="divider-gold" style={{ marginBottom:'24px' }}><span>♥</span></div>
-          <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'clamp(17px,2.5vw,22px)',
+          <h1 className="hero-title" style={{ marginBottom:'20px' }}>Victoria</h1>
+          <div className="divider-gold" style={{ marginBottom:'20px' }}><span>♥</span></div>
+          <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'clamp(16px,2vw,19px)',
             fontStyle:'italic', color:'var(--cream-dim)', maxWidth:'500px',
-            margin:'0 auto', lineHeight:1.8 }}>
+            margin:'0 auto', lineHeight:1.6 }}>
             Cada carta guarda un sentimiento.<br />
             Ábrelas y encuentra lo que el corazón escribe.
           </p>
           {!user && (
-            <div style={{ marginTop:'36px', display:'flex', gap:'14px', justifyContent:'center', flexWrap:'wrap' }}>
+            <div style={{ marginTop:'30px', display:'flex', gap:'12px', justifyContent:'center', flexWrap:'wrap' }}>
               <a href="/register" style={{ textDecoration:'none' }}>
-                <button className="btn-gold" style={{ fontSize:'12px', padding:'14px 36px' }}>Crear mi cuenta</button>
+                <button className="btn-gold" style={{ fontSize:'11px', padding:'10px 28px' }}>Crear mi cuenta</button>
               </a>
               <a href="/login" style={{ textDecoration:'none' }}>
-                <button className="btn-ghost" style={{ fontSize:'12px', padding:'14px 28px' }}>Ya tengo cuenta</button>
+                <button className="btn-ghost" style={{ fontSize:'11px', padding:'10px 22px' }}>Ya tengo cuenta</button>
               </a>
             </div>
           )}
         </section>
 
-        <div style={{ textAlign:'center', marginBottom:'40px' }}>
-          <p style={{ fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'4px',
-            textTransform:'uppercase', color:'var(--cream-muted)' }}>
-            ✦ &nbsp; Cartas de amor &nbsp; ✦
-          </p>
-        </div>
+        {/* Pestaña decorativa */}
+        <Pestana />
 
-        <section style={{ maxWidth:'760px', margin:'0 auto',
-          padding:'0 clamp(16px,4vw,32px) 100px',
-          display:'grid',
-          gridTemplateColumns:'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
-          gap:'24px' }}>
+        {/* Grid de cartas (dos columnas) */}
+        <section style={{ maxWidth:'900px', margin:'0 auto', padding:'0 20px 80px' }}>
           {loading ? (
-            <div style={{ gridColumn:'1/-1', textAlign:'center', padding:'80px 0', color:'var(--cream-muted)' }}>
-              <div style={{ fontSize:'36px', marginBottom:'16px', opacity:0.5 }}>✉</div>
-              <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'20px', fontStyle:'italic' }}>
+            <div style={{ textAlign:'center', padding:'60px 0', color:'var(--cream-muted)' }}>
+              <div style={{ fontSize:'32px', marginBottom:'12px', opacity:0.5 }}>✉</div>
+              <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'18px', fontStyle:'italic' }}>
                 Preparando las cartas...
               </p>
             </div>
           ) : poems.length === 0 ? (
-            <div style={{ gridColumn:'1/-1', textAlign:'center', padding:'60px 0', color:'var(--cream-muted)' }}>
+            <div style={{ textAlign:'center', padding:'60px 0', color:'var(--cream-muted)' }}>
               <p>Visita <code>/api/init</code> para inicializar el contenido.</p>
             </div>
           ) : (
-            poems.map((poem, i) => (
-              <EnvelopeCard key={poem.id} poem={poem} user={user} delay={i * 0.08} />
-            ))
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {poems.map((poem, i) => (
+                <EnvelopeCard key={poem.id} poem={poem} user={user} delay={i * 0.05} />
+              ))}
+            </div>
           )}
         </section>
 
-        <footer style={{ textAlign:'center', padding:'28px 20px 40px',
+        <footer style={{ textAlign:'center', padding:'24px 20px 36px',
           borderTop:'1px solid var(--gold-border)' }}>
-          <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'16px',
+          <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'15px',
             fontStyle:'italic', color:'var(--cream-muted)' }}>
             Hecho con amor, para ti. &nbsp;♥
           </p>
