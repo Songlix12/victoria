@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { saveToken } from '@/lib/client-auth';
 
 function Particles() {
   const golds = ['#c9943a','#e2b55a','#f0cc7a'];
@@ -27,23 +27,33 @@ function Particles() {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [form, setForm]   = useState({ email: '', password: '' });
-  const [error, setError] = useState('');
+  const [form, setForm]    = useState({ email: '', password: '' });
+  const [error, setError]  = useState('');
   const [loading, setLoad] = useState(false);
 
   const change = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
   const submit = async e => {
-    e.preventDefault(); setError(''); setLoad(true);
-    const res = await fetch('/api/auth/login', { credentials: 'include',
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
-    });
-    const data = await res.json();
-    if (res.ok) { window.location.href = '/'; return; }
-    else { setError(data.error || 'Error al iniciar sesión'); }
+    e.preventDefault();
+    setError('');
+    setLoad(true);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        saveToken(data.token);          // ← save JWT to localStorage
+        window.location.href = '/';    // ← full reload so page reads token
+      } else {
+        setError(data.error || 'Correo o contraseña incorrectos');
+      }
+    } catch {
+      setError('Error de conexión. Intenta de nuevo.');
+    }
     setLoad(false);
   };
 
@@ -62,27 +72,21 @@ export default function LoginPage() {
           fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'2px',
           textTransform:'uppercase', color:'var(--cream-muted)', textDecoration:'none',
           transition:'color 0.2s'
-        }} onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'}
-           onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}>
+        }}
+        onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'}
+        onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}>
           ← Volver
         </a>
 
         <div className="auth-card fade-in" style={{ width:'100%', maxWidth:'400px', padding:'clamp(32px,6vw,52px)' }}>
-          {/* Header */}
           <div style={{ textAlign:'center', marginBottom:'40px' }}>
-            <div style={{
-              fontSize:'32px', marginBottom:'16px',
-              filter:'drop-shadow(0 0 10px rgba(139,26,47,0.6))'
-            }}>♥</div>
+            <div style={{ fontSize:'32px', marginBottom:'16px', filter:'drop-shadow(0 0 10px rgba(139,26,47,0.6))' }}>♥</div>
             <h1 style={{
               fontFamily:'Cinzel,serif', fontSize:'clamp(20px,4vw,26px)',
               fontWeight:600, letterSpacing:'5px', textTransform:'uppercase',
-              color:'var(--gold-light)',
-              textShadow:'0 0 20px rgba(201,148,58,0.35)',
+              color:'var(--gold-light)', textShadow:'0 0 20px rgba(201,148,58,0.35)',
               marginBottom:'10px'
-            }}>
-              Bienvenida
-            </h1>
+            }}>Bienvenida</h1>
             <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'17px',
               fontStyle:'italic', color:'var(--cream-muted)' }}>
               Tu espacio especial te espera
@@ -91,23 +95,19 @@ export default function LoginPage() {
               background:'linear-gradient(90deg,transparent,var(--gold),transparent)' }} />
           </div>
 
-          {/* Form */}
           <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:'28px' }}>
             <div>
               <label style={{ display:'block', fontFamily:'Cinzel,serif', fontSize:'9px',
-                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)',
-                marginBottom:'8px' }}>
+                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'8px' }}>
                 Correo electrónico
               </label>
               <input className="luxury-input" type="email" name="email"
                 value={form.email} onChange={change}
                 placeholder="tu@correo.com" required autoComplete="email" />
             </div>
-
             <div>
               <label style={{ display:'block', fontFamily:'Cinzel,serif', fontSize:'9px',
-                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)',
-                marginBottom:'8px' }}>
+                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'8px' }}>
                 Contraseña
               </label>
               <input className="luxury-input" type="password" name="password"
@@ -123,13 +123,10 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider */}
           <div style={{ display:'flex', alignItems:'center', gap:'14px', margin:'28px 0' }}>
             <div style={{ flex:1, height:'1px', background:'var(--gold-border)' }} />
             <span style={{ fontFamily:'Cinzel,serif', fontSize:'9px', letterSpacing:'2px',
-              textTransform:'uppercase', color:'var(--cream-muted)' }}>
-              ¿Primera vez?
-            </span>
+              textTransform:'uppercase', color:'var(--cream-muted)' }}>¿Primera vez?</span>
             <div style={{ flex:1, height:'1px', background:'var(--gold-border)' }} />
           </div>
 

@@ -34,11 +34,13 @@ export async function POST(request) {
 
     const response = NextResponse.json({
       success: true,
+      token,  // ← client will store in localStorage
       user: { id: user.id, name: user.name, email: user.email, isAdmin: user.is_admin }
     });
 
+    // Also set cookie as backup
     response.cookies.set('victoria_token', token, {
-      httpOnly: true,
+      httpOnly: false, // readable by JS so client can also read it
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7,

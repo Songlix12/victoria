@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { saveToken } from '@/lib/client-auth';
 
 function Particles() {
   const golds = ['#c9943a','#e2b55a','#f0cc7a'];
@@ -27,24 +27,34 @@ function Particles() {
 }
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [form, setForm]   = useState({ name:'', email:'', password:'' });
-  const [error, setError] = useState('');
+  const [form, setForm]    = useState({ name:'', email:'', password:'' });
+  const [error, setError]  = useState('');
   const [loading, setLoad] = useState(false);
 
   const change = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
   const submit = async e => {
-    e.preventDefault(); setError('');
+    e.preventDefault();
+    setError('');
     if (form.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); return; }
     setLoad(true);
-    const res = await fetch('/api/auth/register', { credentials: 'include',
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(form)
-    });
-    const data = await res.json();
-    if (res.ok) { window.location.href = '/'; return; }
-    else { setError(data.error || 'Error al crear la cuenta'); }
+    try {
+      const res = await fetch('/api/auth/register', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        credentials:'include',
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        saveToken(data.token);          // ← save JWT to localStorage
+        window.location.href = '/';    // ← full reload
+      } else {
+        setError(data.error || 'Error al crear la cuenta');
+      }
+    } catch {
+      setError('Error de conexión. Intenta de nuevo.');
+    }
     setLoad(false);
   };
 
@@ -63,27 +73,22 @@ export default function RegisterPage() {
           fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'2px',
           textTransform:'uppercase', color:'var(--cream-muted)', textDecoration:'none',
           transition:'color 0.2s'
-        }} onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'}
-           onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}>
+        }}
+        onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'}
+        onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}>
           ← Volver
         </a>
 
         <div className="auth-card fade-in" style={{ width:'100%', maxWidth:'400px', padding:'clamp(32px,6vw,52px)' }}>
-          {/* Header */}
           <div style={{ textAlign:'center', marginBottom:'40px' }}>
-            <div style={{
-              fontSize:'28px', marginBottom:'16px',
-              filter:'drop-shadow(0 0 10px rgba(201,148,58,0.5))'
-            }}>✉</div>
+            <div style={{ fontSize:'28px', marginBottom:'16px',
+              filter:'drop-shadow(0 0 10px rgba(201,148,58,0.5))' }}>✉</div>
             <h1 style={{
               fontFamily:'Cinzel,serif', fontSize:'clamp(18px,3.5vw,24px)',
               fontWeight:600, letterSpacing:'4px', textTransform:'uppercase',
-              color:'var(--gold-light)',
-              textShadow:'0 0 20px rgba(201,148,58,0.35)',
+              color:'var(--gold-light)', textShadow:'0 0 20px rgba(201,148,58,0.35)',
               marginBottom:'10px'
-            }}>
-              Únete
-            </h1>
+            }}>Únete</h1>
             <p style={{ fontFamily:'Cormorant Garamond,serif', fontSize:'17px',
               fontStyle:'italic', color:'var(--cream-muted)' }}>
               Crea tu cuenta para interactuar
@@ -92,34 +97,28 @@ export default function RegisterPage() {
               background:'linear-gradient(90deg,transparent,var(--gold),transparent)' }} />
           </div>
 
-          {/* Form */}
           <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:'26px' }}>
             <div>
               <label style={{ display:'block', fontFamily:'Cinzel,serif', fontSize:'9px',
-                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)',
-                marginBottom:'8px' }}>
+                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'8px' }}>
                 Tu nombre
               </label>
               <input className="luxury-input" type="text" name="name"
                 value={form.name} onChange={change}
                 placeholder="¿Cómo te llamas?" required autoComplete="name" />
             </div>
-
             <div>
               <label style={{ display:'block', fontFamily:'Cinzel,serif', fontSize:'9px',
-                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)',
-                marginBottom:'8px' }}>
+                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'8px' }}>
                 Correo electrónico
               </label>
               <input className="luxury-input" type="email" name="email"
                 value={form.email} onChange={change}
                 placeholder="tu@correo.com" required autoComplete="email" />
             </div>
-
             <div>
               <label style={{ display:'block', fontFamily:'Cinzel,serif', fontSize:'9px',
-                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)',
-                marginBottom:'8px' }}>
+                letterSpacing:'2.5px', textTransform:'uppercase', color:'var(--cream-muted)', marginBottom:'8px' }}>
                 Contraseña
               </label>
               <input className="luxury-input" type="password" name="password"
@@ -138,9 +137,7 @@ export default function RegisterPage() {
           <div style={{ display:'flex', alignItems:'center', gap:'14px', margin:'28px 0' }}>
             <div style={{ flex:1, height:'1px', background:'var(--gold-border)' }} />
             <span style={{ fontFamily:'Cinzel,serif', fontSize:'9px', letterSpacing:'2px',
-              textTransform:'uppercase', color:'var(--cream-muted)' }}>
-              ¿Ya tienes cuenta?
-            </span>
+              textTransform:'uppercase', color:'var(--cream-muted)' }}>¿Ya tienes cuenta?</span>
             <div style={{ flex:1, height:'1px', background:'var(--gold-border)' }} />
           </div>
 
