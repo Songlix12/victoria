@@ -36,7 +36,7 @@ export default function LoginPage() {
 
   const submit = async e => {
     e.preventDefault(); setError(''); setLoad(true);
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch('/api/auth/login', { credentials: 'include',
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form)

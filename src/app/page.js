@@ -1,6 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
 
+// Helper: fetch that ALWAYS sends cookies
+const api = (url, opts = {}) =>
+  fetch(url, { credentials: 'include', ...opts });
+
 /* ── Ambient particles ─────────────────────────── */
 function AmbientParticles() {
   const golds = ['#c9943a','#e2b55a','#f0cc7a','#d4a843'];
@@ -40,7 +44,7 @@ function CommentSection({ poemId, user }) {
   const [posting, setPosting]   = useState(false);
 
   useEffect(() => {
-    fetch(`/api/poems/${poemId}/comments`)
+    api(`/api/poems/${poemId}/comments`)
       .then(r => r.json())
       .then(d => { setComments(d.comments || []); setLoading(false); });
   }, [poemId]);
@@ -49,13 +53,19 @@ function CommentSection({ poemId, user }) {
     e.preventDefault();
     if (!text.trim() || posting) return;
     setPosting(true);
-    const res = await fetch(`/api/poems/${poemId}/comments`, {
+    const res = await api(`/api/poems/${poemId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content: text.trim() })
     });
     const data = await res.json();
-    if (data.comment) { setComments(p => [...p, data.comment]); setText(''); }
+    if (res.ok && data.comment) {
+      setComments(p => [...p, data.comment]);
+      setText('');
+    } else if (!res.ok) {
+      // If unauthorized, redirect to login
+      if (res.status === 401) window.location.href = '/login';
+    }
     setPosting(false);
   };
 
@@ -120,25 +130,36 @@ function CommentSection({ poemId, user }) {
 
 /* ── Envelope Card ─────────────────────────────── */
 function EnvelopeCard({ poem, user, delay }) {
-  const [opened, setOpened]     = useState(false);
-  const [liked, setLiked]       = useState(poem.user_liked);
-  const [likeCount, setCount]   = useState(Number(poem.like_count));
+  const [opened, setOpened]      = useState(false);
+  const [liked, setLiked]        = useState(poem.user_liked);
+  const [likeCount, setCount]    = useState(Number(poem.like_count));
   const [showComments, setShowC] = useState(false);
-  const [animHeart, setAnimH]   = useState(false);
+  const [animHeart, setAnimH]    = useState(false);
 
-  const handleOpen = () => setOpened(true);
+  const handleOpen  = () => setOpened(true);
   const handleClose = e => { e.stopPropagation(); setOpened(false); setShowC(false); };
 
   const handleLike = async e => {
     e.stopPropagation();
     if (!user) { window.location.href = '/login'; return; }
-    setAnimH(true); setTimeout(() => setAnimH(false), 400);
+
+    setAnimH(true);
+    setTimeout(() => setAnimH(false), 400);
     const prev = liked;
-    setLiked(!prev); setCount(c => prev ? c - 1 : c + 1);
-    const res = await fetch(`/api/poems/${poem.id}/like`, { method: 'POST' });
-    const d = await res.json();
-    if (res.ok) { setLiked(d.liked); setCount(d.count); }
-    else { setLiked(prev); setCount(c => prev ? c + 1 : c - 1); }
+    setLiked(!prev);
+    setCount(c => prev ? c - 1 : c + 1);
+
+    const res = await api(`/api/poems/${poem.id}/like`, { method: 'POST' });
+    if (res.ok) {
+      const d = await res.json();
+      setLiked(d.liked);
+      setCount(d.count);
+    } else {
+      // Revert optimistic update
+      setLiked(prev);
+      setCount(c => prev ? c + 1 : c - 1);
+      if (res.status === 401) window.location.href = '/login';
+    }
   };
 
   return (
@@ -147,14 +168,9 @@ function EnvelopeCard({ poem, user, delay }) {
         /* ── Closed envelope ── */
         <div className="envelope-scene" onClick={handleOpen} role="button" aria-label="Abrir carta">
           <div className="envelope-body">
-            {/* Flap top */}
             <div className="env-flap" />
-            {/* Flap bottom */}
             <div className="env-flap-bottom" />
-
-            {/* Content */}
             <div className="wax-seal">♥</div>
-
             <div style={{ textAlign:'center', zIndex:2 }}>
               <h3 style={{
                 fontFamily:'Cinzel,serif', fontSize:'clamp(13px,2vw,16px)',
@@ -166,8 +182,6 @@ function EnvelopeCard({ poem, user, delay }) {
               </h3>
               <p className="envelope-hint">Toca para abrir</p>
             </div>
-
-            {/* Stats */}
             <div style={{ display:'flex', gap:'18px', zIndex:2 }}>
               <span style={{ fontSize:'13px', color: liked ? '#e07090':'var(--cream-muted)',
                 display:'flex', alignItems:'center', gap:'5px' }}>
@@ -183,11 +197,9 @@ function EnvelopeCard({ poem, user, delay }) {
       ) : (
         /* ── Open letter ── */
         <div className="envelope-scene">
-          {/* Flap (animated open) */}
           <div style={{ position:'relative' }}>
             <div className="env-flap opened" />
           </div>
-
           <div className="letter-paper">
             <div className="letter-content">
               {/* Close button */}
@@ -196,9 +208,10 @@ function EnvelopeCard({ poem, user, delay }) {
                 border:'none', cursor:'pointer', color:'var(--cream-muted)',
                 fontSize:'20px', lineHeight:1, zIndex:10,
                 transition:'color 0.2s', fontFamily:'serif'
-              }} onMouseEnter={e=>e.currentTarget.style.color='var(--crimson)'}
-                 onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}
-                 title="Cerrar">✕</button>
+              }}
+              onMouseEnter={e=>e.currentTarget.style.color='var(--crimson)'}
+              onMouseLeave={e=>e.currentTarget.style.color='var(--cream-muted)'}
+              title="Cerrar">✕</button>
 
               {/* Title */}
               <div style={{ textAlign:'center', marginBottom:'28px' }}>
@@ -216,14 +229,13 @@ function EnvelopeCard({ poem, user, delay }) {
                   background:'linear-gradient(90deg,transparent,var(--crimson),transparent)' }} />
               </div>
 
-              {/* Poem text */}
+              {/* Poem */}
               <p style={{
                 fontFamily:'EB Garamond,serif',
                 fontSize:'clamp(17px,2.5vw,20px)',
                 lineHeight:2.05, color:'var(--letter-text)',
                 whiteSpace:'pre-line', fontStyle:'italic',
-                fontWeight:400, textAlign:'center',
-                letterSpacing:'0.2px',
+                fontWeight:400, textAlign:'center', letterSpacing:'0.2px',
               }}>
                 {poem.content}
               </p>
@@ -235,19 +247,19 @@ function EnvelopeCard({ poem, user, delay }) {
                 borderTop:'1px solid rgba(139,26,47,0.15)'
               }}>
                 <button onClick={handleLike} style={{
-                  background:'none', border:'none', cursor:'pointer',
+                  background: liked ? 'rgba(139,26,47,0.1)' : 'transparent',
+                  border:'none', cursor:'pointer',
                   display:'flex', alignItems:'center', gap:'7px',
                   fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'1.5px',
-                  textTransform:'uppercase', padding:'8px 16px',
+                  textTransform:'uppercase', padding:'8px 16px', borderRadius:'1px',
                   color: liked ? 'var(--crimson)' : 'var(--cream-muted)',
-                  borderRadius:'1px', transition:'background 0.2s, color 0.2s',
-                  background: liked ? 'rgba(139,26,47,0.08)' : 'transparent',
+                  transition:'background 0.2s, color 0.2s',
                 }}>
                   <span style={{
-                    fontSize:'20px', lineHeight:1,
-                    display:'inline-block',
-                    transform: animHeart ? 'scale(1.4)' : 'scale(1)',
-                    transition:'transform 0.2s'
+                    fontSize:'20px', lineHeight:1, display:'inline-block',
+                    transform: animHeart ? 'scale(1.5)' : 'scale(1)',
+                    transition:'transform 0.2s',
+                    color: liked ? '#c94060' : 'inherit'
                   }}>
                     {liked ? '❤' : '♡'}
                   </span>
@@ -262,16 +274,14 @@ function EnvelopeCard({ poem, user, delay }) {
                   fontFamily:'Cinzel,serif', fontSize:'11px', letterSpacing:'1.5px',
                   textTransform:'uppercase', padding:'8px 16px',
                   color: showComments ? 'var(--gold)' : 'var(--cream-muted)',
-                  borderRadius:'1px', transition:'color 0.2s',
+                  transition:'color 0.2s',
                 }}>
                   <span style={{ fontSize:'16px', lineHeight:1 }}>✉</span>
                   {showComments ? 'Ocultar' : 'Comentar'}
                 </button>
               </div>
 
-              {showComments && (
-                <CommentSection poemId={poem.id} user={user} />
-              )}
+              {showComments && <CommentSection poemId={poem.id} user={user} />}
             </div>
           </div>
         </div>
@@ -282,32 +292,34 @@ function EnvelopeCard({ poem, user, delay }) {
 
 /* ── Main page ─────────────────────────────────── */
 export default function HomePage() {
-  const [user, setUser]   = useState(null);
-  const [poems, setPoems] = useState([]);
+  const [user, setUser]    = useState(null);
+  const [poems, setPoems]  = useState([]);
   const [loading, setLoad] = useState(true);
 
   useEffect(() => {
+    // credentials: 'include' is critical — sends the session cookie
     Promise.all([
-      fetch('/api/auth/me').then(r => r.json()),
-      fetch('/api/poems').then(r => r.json()),
+      api('/api/auth/me').then(r => r.json()),
+      api('/api/poems').then(r => r.json()),
     ]).then(([u, p]) => {
       setUser(u.user || null);
       setPoems(p.poems || []);
       setLoad(false);
-    });
+    }).catch(() => setLoad(false));
   }, []);
 
+  // Keep session alive
   useEffect(() => {
     if (!user) return;
     const id = setInterval(() => {
-      fetch('/api/auth/heartbeat', { method: 'POST' });
+      api('/api/auth/heartbeat', { method: 'POST' });
     }, 30_000);
     return () => clearInterval(id);
   }, [user]);
 
   const logout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
+    await api('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/';
   };
 
   return (
@@ -358,7 +370,6 @@ export default function HomePage() {
           textAlign:'center', padding:'clamp(60px,10vw,110px) 20px clamp(40px,6vw,70px)',
           position:'relative', overflow:'hidden'
         }}>
-          {/* Glow */}
           <div style={{
             position:'absolute', top:'50%', left:'50%',
             transform:'translate(-50%,-50%)',
@@ -416,7 +427,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Envelopes grid */}
+        {/* Envelopes */}
         <section style={{
           maxWidth:'760px', margin:'0 auto',
           padding:'0 clamp(16px,4vw,32px) 100px',

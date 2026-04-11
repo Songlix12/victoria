@@ -11,8 +11,8 @@ export default function AdminPage() {
 
   const load = async () => {
     const [me, usrs] = await Promise.all([
-      fetch('/api/auth/me').then(r => r.json()),
-      fetch('/api/admin/users').then(r => r.json()),
+      fetch('/api/auth/me', { credentials: 'include' }).then(r => r.json()),
+      fetch('/api/admin/users', { credentials: 'include' }).then(r => r.json()),
     ]);
     if (!me.user?.isAdmin) { router.push('/'); return; }
     setUser(me.user);

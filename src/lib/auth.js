@@ -14,13 +14,26 @@ export function verifyToken(token) {
   }
 }
 
+// Next.js App Router provides request.cookies.get() — much more reliable than manual parsing
 export function getTokenFromRequest(request) {
-  const cookieHeader = request.headers.get('cookie') || '';
-  const cookies = Object.fromEntries(
-    cookieHeader.split(';').map(c => {
-      const [k, ...v] = c.trim().split('=');
-      return [k.trim(), v.join('=')];
-    })
-  );
-  return cookies['victoria_token'] || null;
+  // Method 1: Next.js built-in cookies API (most reliable)
+  try {
+    const cookie = request.cookies.get('victoria_token');
+    if (cookie?.value) return cookie.value;
+  } catch {}
+
+  // Method 2: Manual header parsing as fallback
+  try {
+    const cookieHeader = request.headers.get('cookie') || '';
+    if (!cookieHeader) return null;
+    for (const part of cookieHeader.split(';')) {
+      const [rawKey, ...rawVal] = part.split('=');
+      const key = rawKey.trim();
+      if (key === 'victoria_token') {
+        return rawVal.join('=').trim() || null;
+      }
+    }
+  } catch {}
+
+  return null;
 }

@@ -38,7 +38,7 @@ export default function RegisterPage() {
     e.preventDefault(); setError('');
     if (form.password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); return; }
     setLoad(true);
-    const res = await fetch('/api/auth/register', {
+    const res = await fetch('/api/auth/register', { credentials: 'include',
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify(form)
     });
