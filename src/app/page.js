@@ -1,39 +1,30 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { authFetch, clearToken } from '@/lib/client-auth';
-import Image from 'next/image';
 
-/* ── Ambient particles (girasoles y corazones) ── */
+/* ── Ambient particles (solo corazones, sin girasoles) ── */
 function AmbientParticles() {
   const golds = ['#c9943a','#e2b55a','#f0cc7a','#d4a843'];
   return (
     <div aria-hidden="true">
-      {Array.from({length:15},(_,i) => {
-        const s = 2 + Math.random() * 4;
+      {Array.from({length:18},(_,i) => {
+        const s = 1.5 + Math.random() * 3;
         return (
           <div key={`p${i}`} className="particle" style={{
             left:`${Math.random()*100}%`,
             width:`${s}px`, height:`${s}px`,
             background: golds[i%4],
-            animationDuration:`${12+Math.random()*16}s`,
+            animationDuration:`${10+Math.random()*16}s`,
             animationDelay:`${Math.random()*14}s`,
           }} />
         );
       })}
-      {Array.from({length:8},(_,i) => (
+      {Array.from({length:12},(_,i) => (
         <div key={`h${i}`} className="floating-heart" style={{
           left:`${Math.random()*100}%`,
-          animationDuration:`${14+Math.random()*12}s`,
+          animationDuration:`${12+Math.random()*14}s`,
           animationDelay:`${Math.random()*16}s`,
-          fontSize:`${12+Math.random()*8}px`,
-        }}>🌻</div> // 🌻 girasol en lugar de corazón
-      ))}
-      {Array.from({length:6},(_,i) => (
-        <div key={`s${i}`} className="floating-heart" style={{
-          left:`${Math.random()*100}%`,
-          animationDuration:`${16+Math.random()*10}s`,
-          animationDelay:`${Math.random()*18}s`,
-          fontSize:`${14+Math.random()*10}px`,
+          fontSize:`${10+Math.random()*8}px`,
         }}>♥</div>
       ))}
     </div>
@@ -121,7 +112,7 @@ function CommentSection({ poemId, user }) {
   );
 }
 
-/* ── Envelope Card (más pequeña, igual que antes) ── */
+/* ── Envelope Card (más pequeña, sin girasol) ── */
 function EnvelopeCard({ poem, user, delay }) {
   const [opened, setOpened]      = useState(false);
   const [liked, setLiked]        = useState(poem.user_liked);
@@ -152,7 +143,7 @@ function EnvelopeCard({ poem, user, delay }) {
           <div className="envelope-body">
             <div className="env-flap" />
             <div className="env-flap-bottom" />
-            <div className="wax-seal">🌻</div>
+            <div className="wax-seal">♥</div>
             <div style={{ textAlign:'center', zIndex:2 }}>
               <h3 style={{ fontFamily:'Cinzel,serif', fontSize:'11px',
                 letterSpacing:'2px', textTransform:'uppercase',
@@ -253,25 +244,71 @@ function EnvelopeCard({ poem, user, delay }) {
   );
 }
 
-/* ── Componente de pestañas elegante ── */
+/* ── Componente de pestañas (alineado a la derecha) ── */
 function ElegantTabs({ activeTab, setActiveTab }) {
   return (
-    <div className="tabs-container">
+    <div style={{
+      display: 'flex',
+      justifyContent: 'flex-end',
+      gap: '1.5rem',
+      padding: '0.5rem 2rem',
+      borderBottom: '1px solid rgba(201,148,58,0.2)',
+      marginBottom: '2rem',
+    }}>
       <button 
         className={`tab-button ${activeTab === 'cartas' ? 'active' : ''}`}
         onClick={() => setActiveTab('cartas')}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          fontFamily: 'Cinzel, serif',
+          fontSize: '0.75rem',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: activeTab === 'cartas' ? 'var(--gold-light)' : 'var(--cream-muted)',
+          cursor: 'pointer',
+          padding: '0.5rem 0',
+          borderBottom: activeTab === 'cartas' ? '2px solid var(--gold)' : '2px solid transparent',
+          transition: 'all 0.3s',
+        }}
       >
         📜 Cartas de amor
       </button>
       <button 
         className={`tab-button ${activeTab === 'girasoles' ? 'active' : ''}`}
         onClick={() => setActiveTab('girasoles')}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          fontFamily: 'Cinzel, serif',
+          fontSize: '0.75rem',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: activeTab === 'girasoles' ? 'var(--gold-light)' : 'var(--cream-muted)',
+          cursor: 'pointer',
+          padding: '0.5rem 0',
+          borderBottom: activeTab === 'girasoles' ? '2px solid var(--gold)' : '2px solid transparent',
+          transition: 'all 0.3s',
+        }}
       >
         🌻 Su flor favorita
       </button>
       <button 
         className={`tab-button ${activeTab === 'poema' ? 'active' : ''}`}
         onClick={() => setActiveTab('poema')}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          fontFamily: 'Cinzel, serif',
+          fontSize: '0.75rem',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          color: activeTab === 'poema' ? 'var(--gold-light)' : 'var(--cream-muted)',
+          cursor: 'pointer',
+          padding: '0.5rem 0',
+          borderBottom: activeTab === 'poema' ? '2px solid var(--gold)' : '2px solid transparent',
+          transition: 'all 0.3s',
+        }}
       >
         ✨ Un verso para ella
       </button>
@@ -286,7 +323,7 @@ function TabContent({ activeTab, user, poems, loading }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {loading ? (
           <div className="col-span-full text-center py-12 text-cream-muted">
-            <div className="text-3xl mb-2 opacity-50">🌻</div>
+            <div className="text-3xl mb-2 opacity-50">✉</div>
             <p className="font-cormorant text-lg italic">Preparando las cartas...</p>
           </div>
         ) : poems.length === 0 ? (
@@ -305,7 +342,7 @@ function TabContent({ activeTab, user, poems, loading }) {
   if (activeTab === 'girasoles') {
     return (
       <div className="max-w-3xl mx-auto text-center py-8 px-4">
-        <div className="text-7xl mb-6">🌻🌻🌻</div>
+        <div className="text-6xl mb-6">🌻🌻🌻</div>
         <h2 className="font-playfair text-3xl italic text-gold-light mb-4">Como los girasoles que amas</h2>
         <p className="font-garamond text-lg text-cream-dim leading-relaxed">
           Los girasoles siempre buscan la luz, igual que mi corazón te busca a ti, Victoria.
@@ -349,7 +386,7 @@ function TabContent({ activeTab, user, poems, loading }) {
   return null;
 }
 
-/* ── MAIN PAGE ── */
+/* ── MAIN PAGE (estática, hero centrado, sin girasoles decorativos) ── */
 export default function HomePage() {
   const [user, setUser]    = useState(null);
   const [poems, setPoems]  = useState([]);
@@ -409,54 +446,38 @@ export default function HomePage() {
         </div>
       </nav>
 
-      <main className="page-content" style={{ paddingTop:'64px' }}>
-        {/* Hero section moderna con girasol */}
-        <div className="hero-grid">
-          <div className="hero-text">
-            <p className="font-cinzel text-xs tracking-[4px] text-crimson-soft mb-3">✦ UN ESPACIO DE AMOR ✦</p>
-            <h1 className="hero-title text-left" style={{ fontSize: 'clamp(3rem, 8vw, 5rem)' }}>Victoria</h1>
-            <div className="w-16 h-px bg-gold my-4"></div>
-            <p className="font-cormorant text-xl italic text-cream-dim leading-relaxed">
-              Cada carta guarda un sentimiento. <br />
-              Ábrelas y encuentra lo que el corazón escribe.
-            </p>
-            {!user && (
-              <div className="flex gap-3 mt-6">
-                <a href="/register"><button className="btn-gold text-sm py-2 px-5">Crear mi cuenta</button></a>
-                <a href="/login"><button className="btn-ghost text-sm py-2 px-5">Ya tengo cuenta</button></a>
-              </div>
-            )}
-          </div>
-          <div className="hero-image">
-            <Image 
-              src="https://images.unsplash.com/photo-1597848212624-19a1f7ddc3e2?w=600&h=800&fit=crop"
-              alt="Campo de girasoles"
-              width={600}
-              height={800}
-              className="rounded-2xl"
-              priority
-            />
-          </div>
-        </div>
+      {/* Hero centrado (sin imagen, sin girasoles) */}
+      <div className="page-content" style={{ paddingTop: '80px' }}>
+        <section style={{ textAlign:'center', padding:'clamp(40px,6vw,70px) 20px clamp(30px,4vw,50px)' }}>
+          <p className="font-cinzel text-xs tracking-[4px] text-crimson-soft mb-3">✦ UN ESPACIO DE AMOR ✦</p>
+          <h1 className="hero-title">Victoria</h1>
+          <div className="divider-gold my-4"><span>♥</span></div>
+          <p className="font-cormorant text-xl italic text-cream-dim max-w-xl mx-auto leading-relaxed">
+            Cada carta guarda un sentimiento.<br />
+            Ábrelas y encuentra lo que el corazón escribe.
+          </p>
+          {!user && (
+            <div className="flex gap-3 justify-center mt-6">
+              <a href="/register"><button className="btn-gold text-sm py-2 px-5">Crear mi cuenta</button></a>
+              <a href="/login"><button className="btn-ghost text-sm py-2 px-5">Ya tengo cuenta</button></a>
+            </div>
+          )}
+        </section>
 
-        {/* Girasoles decorativos flotantes (solo visual) */}
-        <div className="sunflower-deco sunflower-left">🌻</div>
-        <div className="sunflower-deco sunflower-right">🌻</div>
-
-        {/* Pestañas elegantes */}
+        {/* Pestañas alineadas a la derecha */}
         <ElegantTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-        {/* Contenido de la pestaña activa */}
+        {/* Contenido dinámico */}
         <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px 70px' }}>
           <TabContent activeTab={activeTab} user={user} poems={poems} loading={loading} />
         </section>
 
         <footer className="text-center py-6 border-t border-gold-border">
           <p className="font-cormorant text-sm italic text-cream-muted">
-            Hecho con amor, para ti. 🌻♥
+            Hecho con amor, para ti. ♥
           </p>
         </footer>
-      </main>
+      </div>
     </>
   );
 }
