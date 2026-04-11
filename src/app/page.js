@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { authFetch, clearToken } from '@/lib/client-auth';
 
-/* ── Ambient particles (solo corazones, sin girasoles) ── */
+/* ── Ambient particles (solo corazones) ── */
 function AmbientParticles() {
   const golds = ['#c9943a','#e2b55a','#f0cc7a','#d4a843'];
   return (
@@ -112,7 +112,7 @@ function CommentSection({ poemId, user }) {
   );
 }
 
-/* ── Envelope Card (más pequeña, sin girasol) ── */
+/* ── Envelope Card (más pequeña) ── */
 function EnvelopeCard({ poem, user, delay }) {
   const [opened, setOpened]      = useState(false);
   const [liked, setLiked]        = useState(poem.user_liked);
@@ -244,79 +244,7 @@ function EnvelopeCard({ poem, user, delay }) {
   );
 }
 
-/* ── Componente de pestañas (alineado a la derecha) ── */
-function ElegantTabs({ activeTab, setActiveTab }) {
-  return (
-    <div style={{
-      display: 'flex',
-      justifyContent: 'flex-end',
-      gap: '1.5rem',
-      padding: '0.5rem 2rem',
-      borderBottom: '1px solid rgba(201,148,58,0.2)',
-      marginBottom: '2rem',
-    }}>
-      <button 
-        className={`tab-button ${activeTab === 'cartas' ? 'active' : ''}`}
-        onClick={() => setActiveTab('cartas')}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          fontFamily: 'Cinzel, serif',
-          fontSize: '0.75rem',
-          letterSpacing: '2px',
-          textTransform: 'uppercase',
-          color: activeTab === 'cartas' ? 'var(--gold-light)' : 'var(--cream-muted)',
-          cursor: 'pointer',
-          padding: '0.5rem 0',
-          borderBottom: activeTab === 'cartas' ? '2px solid var(--gold)' : '2px solid transparent',
-          transition: 'all 0.3s',
-        }}
-      >
-        📜 Cartas de amor
-      </button>
-      <button 
-        className={`tab-button ${activeTab === 'girasoles' ? 'active' : ''}`}
-        onClick={() => setActiveTab('girasoles')}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          fontFamily: 'Cinzel, serif',
-          fontSize: '0.75rem',
-          letterSpacing: '2px',
-          textTransform: 'uppercase',
-          color: activeTab === 'girasoles' ? 'var(--gold-light)' : 'var(--cream-muted)',
-          cursor: 'pointer',
-          padding: '0.5rem 0',
-          borderBottom: activeTab === 'girasoles' ? '2px solid var(--gold)' : '2px solid transparent',
-          transition: 'all 0.3s',
-        }}
-      >
-        🌻 Su flor favorita
-      </button>
-      <button 
-        className={`tab-button ${activeTab === 'poema' ? 'active' : ''}`}
-        onClick={() => setActiveTab('poema')}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          fontFamily: 'Cinzel, serif',
-          fontSize: '0.75rem',
-          letterSpacing: '2px',
-          textTransform: 'uppercase',
-          color: activeTab === 'poema' ? 'var(--gold-light)' : 'var(--cream-muted)',
-          cursor: 'pointer',
-          padding: '0.5rem 0',
-          borderBottom: activeTab === 'poema' ? '2px solid var(--gold)' : '2px solid transparent',
-          transition: 'all 0.3s',
-        }}
-      >
-        ✨ Un verso para ella
-      </button>
-    </div>
-  );
-}
-
-/* ── Contenido de las pestañas ── */
+/* ── Contenido de las pestañas (sin la barra de tabs) ── */
 function TabContent({ activeTab, user, poems, loading }) {
   if (activeTab === 'cartas') {
     return (
@@ -386,7 +314,7 @@ function TabContent({ activeTab, user, poems, loading }) {
   return null;
 }
 
-/* ── MAIN PAGE (estática, hero centrado, sin girasoles decorativos) ── */
+/* ── MAIN PAGE (con pestañas en la barra de navegación) ── */
 export default function HomePage() {
   const [user, setUser]    = useState(null);
   const [poems, setPoems]  = useState([]);
@@ -424,8 +352,69 @@ export default function HomePage() {
       <AmbientParticles />
       <div className="gold-top-line" />
 
+      {/* Barra de navegación con logo, pestañas y botones de usuario */}
       <nav className="luxury-nav">
         <a href="/" className="nav-logo">Victoria</a>
+
+        {/* Pestañas de navegación integradas */}
+        <div style={{ display: 'flex', gap: '1.5rem', marginLeft: 'auto', marginRight: '1rem' }}>
+          <button
+            onClick={() => setActiveTab('cartas')}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'Cinzel, serif',
+              fontSize: '0.7rem',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: activeTab === 'cartas' ? 'var(--gold-light)' : 'var(--cream-muted)',
+              cursor: 'pointer',
+              padding: '0.25rem 0',
+              borderBottom: activeTab === 'cartas' ? '2px solid var(--gold)' : '2px solid transparent',
+              transition: 'all 0.3s',
+            }}
+          >
+            📜 Cartas
+          </button>
+          <button
+            onClick={() => setActiveTab('girasoles')}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'Cinzel, serif',
+              fontSize: '0.7rem',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: activeTab === 'girasoles' ? 'var(--gold-light)' : 'var(--cream-muted)',
+              cursor: 'pointer',
+              padding: '0.25rem 0',
+              borderBottom: activeTab === 'girasoles' ? '2px solid var(--gold)' : '2px solid transparent',
+              transition: 'all 0.3s',
+            }}
+          >
+            🌻 Girasoles
+          </button>
+          <button
+            onClick={() => setActiveTab('poema')}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'Cinzel, serif',
+              fontSize: '0.7rem',
+              letterSpacing: '2px',
+              textTransform: 'uppercase',
+              color: activeTab === 'poema' ? 'var(--gold-light)' : 'var(--cream-muted)',
+              cursor: 'pointer',
+              padding: '0.25rem 0',
+              borderBottom: activeTab === 'poema' ? '2px solid var(--gold)' : '2px solid transparent',
+              transition: 'all 0.3s',
+            }}
+          >
+            ✨ Verso
+          </button>
+        </div>
+
+        {/* Botones de usuario */}
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           {user ? (
             <>
@@ -446,7 +435,7 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Hero centrado (sin imagen, sin girasoles) */}
+      {/* Hero centrado */}
       <div className="page-content" style={{ paddingTop: '80px' }}>
         <section style={{ textAlign:'center', padding:'clamp(40px,6vw,70px) 20px clamp(30px,4vw,50px)' }}>
           <p className="font-cinzel text-xs tracking-[4px] text-crimson-soft mb-3">✦ UN ESPACIO DE AMOR ✦</p>
@@ -464,10 +453,7 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Pestañas alineadas a la derecha */}
-        <ElegantTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-        {/* Contenido dinámico */}
+        {/* Contenido dinámico según la pestaña activa */}
         <section style={{ maxWidth: '900px', margin: '0 auto', padding: '0 20px 70px' }}>
           <TabContent activeTab={activeTab} user={user} poems={poems} loading={loading} />
         </section>
