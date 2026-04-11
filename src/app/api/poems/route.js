@@ -44,3 +44,46 @@ export async function GET(request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request) {
+  try {
+    const { verifyToken, getTokenFromRequest } = await import('@/lib/auth');
+    const token = getTokenFromRequest(request);
+    const payload = token ? verifyToken(token) : null;
+    if (!payload?.userId) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+
+    const userResult = await query('SELECT is_admin FROM users WHERE id = $1', [payload.userId]);
+    if (!userResult.rows[0]?.is_admin) return NextResponse.json({ error: 'Solo admins' }, { status: 403 });
+
+    const { title, content } = await request.json();
+    if (!title?.trim() || !content?.trim()) return NextResponse.json({ error: 'Título y contenido requeridos' }, { status: 400 });
+
+    const result = await query(
+      'INSERT INTO poems (title, content, created_at) VALUES ($1, $2, NOW()) RETURNING *',
+      [title.trim(), content.trim()]
+    );
+    return NextResponse.json({ poem: result.rows[0] }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const { verifyToken, getTokenFromRequest } = await import('@/lib/auth');
+    const token = getTokenFromRequest(request);
+    const payload = token ? verifyToken(token) : null;
+    if (!payload?.userId) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+
+    const userResult = await query('SELECT is_admin FROM users WHERE id = $1', [payload.userId]);
+    if (!userResult.rows[0]?.is_admin) return NextResponse.json({ error: 'Solo admins' }, { status: 403 });
+
+    const { id } = await request.json();
+    if (!id) return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
+
+    await query('DELETE FROM poems WHERE id = $1', [id]);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
