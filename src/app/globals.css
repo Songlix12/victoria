@@ -353,3 +353,109 @@ body {
   border-radius: 2px; padding: 12px 16px; color: #e07090;
   font-size: 16px; font-family: 'EB Garamond',serif; text-align: center;
 }
+/* ===== NUEVOS ESTILOS PARA TABS Y GIRASOL ===== */
+
+/* Tabs elegantes */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid rgba(201, 148, 58, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.tab-button {
+  background: transparent;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--cream-muted);
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s;
+  border-bottom: 2px solid transparent;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: var(--gold);
+}
+
+.tab-button.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+}
+
+/* Sección hero con imagen */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 2rem;
+}
+
+.hero-text {
+  text-align: left;
+}
+
+.hero-image {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  border: 1px solid rgba(201,148,58,0.3);
+}
+
+.hero-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* Decoración de girasol flotante */
+.sunflower-deco {
+  position: absolute;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  font-size: 180px;
+  user-select: none;
+}
+
+.sunflower-left {
+  bottom: 10%;
+  left: -5%;
+  transform: rotate(-15deg);
+}
+
+.sunflower-right {
+  top: 15%;
+  right: -5%;
+  transform: rotate(25deg);
+}
+
+/* Ajustes responsive */
+@media (max-width: 768px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2rem;
+    padding: 1.5rem;
+  }
+  .hero-text {
+    text-align: center;
+  }
+  .tabs-container {
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .tab-button {
+    font-size: 0.7rem;
+  }
+}
