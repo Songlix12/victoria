@@ -435,13 +435,13 @@ function BookSection({ poems = [], loading, onOpen }) {
           display:flex; border-radius:0 0 16px 0; overflow:hidden;
         }
         .b-navbar-left {
-          width:40%; background:#0d0104; flex-shrink:0;
+          width:40%; background:#000; flex-shrink:0;
           display:flex; align-items:center; justify-content:center;
           padding:clamp(10px,2vw,16px);
           border-radius:0 0 0 4px;
         }
         .b-navbar-right {
-          flex:1; background:#0d0104;
+          flex:1; background:#000;
           display:flex; align-items:center; justify-content:space-between;
           padding:clamp(10px,2vw,16px) clamp(14px,3vw,26px);
           gap:8px; border-radius:0 0 16px 0;
