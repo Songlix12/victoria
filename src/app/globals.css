@@ -162,21 +162,21 @@ body {
 }
 
 /* ══════════════════════════════════════════
-   ENVELOPE / LETTER (responsive, más pequeñas)
+   ENVELOPE / LETTER (MÁS PEQUEÑAS)
 ══════════════════════════════════════════ */
 
 .envelope-scene { cursor: pointer; position: relative; }
 
-/* Envelope body más compacto */
+/* Envelope body aún más compacto */
 .envelope-body {
   position: relative; overflow: hidden;
   background: linear-gradient(170deg, #1e0e04 0%, #130900 50%, #0d0600 100%);
   border: 1px solid var(--gold-border);
   border-radius: 3px;
-  min-height: 160px;   /* antes 190px */
+  min-height: 130px;   /* reducido */
   display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 12px;
-  padding: 24px 20px;   /* antes 40px 28px */
+  align-items: center; justify-content: center; gap: 8px;
+  padding: 18px 12px;   /* menos padding */
   transition: border-color 0.4s, box-shadow 0.4s;
   box-shadow: 0 6px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(201,148,58,0.1);
 }
@@ -191,7 +191,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 70px;
+  height: 55px;
   z-index: 4;
   pointer-events: none;
   transform-origin: top center;
@@ -215,7 +215,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 60px;
+  height: 45px;
   z-index: 1;
   pointer-events: none;
 }
@@ -230,8 +230,8 @@ body {
 
 /* Sello de cera más pequeño */
 .wax-seal {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   z-index: 3;
   flex-shrink: 0;
@@ -240,30 +240,30 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;   /* antes 22px */
-  box-shadow: 0 3px 15px rgba(139,26,47,0.6), 0 0 0 3px rgba(139,26,47,0.12);
+  font-size: 14px;
+  box-shadow: 0 2px 10px rgba(139,26,47,0.6), 0 0 0 2px rgba(139,26,47,0.12);
   transition: transform 0.4s, box-shadow 0.4s;
 }
 .envelope-scene:hover .wax-seal {
-  transform: scale(1.08) rotate(5deg);
+  transform: scale(1.05) rotate(5deg);
 }
 
 .envelope-hint {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 11px;      /* antes 13px */
+  font-size: 9px;
   font-style: italic;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   color: var(--cream-muted);
   text-transform: uppercase;
 }
 .envelope-scene:hover .envelope-hint { color: var(--gold); }
 
-/* Carta abierta (letter) */
+/* Carta abierta (letter) más compacta */
 .letter-paper {
   background: var(--letter-cream);
   border: 1px solid rgba(201,148,58,0.2);
   border-radius: 2px;
-  padding: 32px clamp(20px,4vw,40px) 32px; /* más compacto */
+  padding: 24px 16px 24px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 16px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,148,58,0.08);
@@ -271,7 +271,7 @@ body {
 }
 .letter-paper::before {
   content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold-bright) 50%, var(--gold) 80%, transparent);
 }
 .letter-paper::after {
@@ -279,8 +279,8 @@ body {
   position: absolute; inset: 0; pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
-    transparent, transparent 31px,
-    rgba(139,26,47,0.06) 31px, rgba(139,26,47,0.06) 32px
+    transparent, transparent 28px,
+    rgba(139,26,47,0.05) 28px, rgba(139,26,47,0.05) 29px
   );
 }
 @keyframes unfold {
@@ -292,7 +292,7 @@ body {
 /* ── Comments ── */
 .comment-item {
   border-left: 2px solid rgba(201,148,58,0.25);
-  padding: 8px 0 8px 14px;
+  padding: 6px 0 6px 12px;
   animation: fadeUp 0.3s ease forwards;
 }
 @keyframes fadeUp {
