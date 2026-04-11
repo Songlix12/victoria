@@ -1,4 +1,5 @@
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 import { query } from '@/lib/db';
 import { NextResponse } from 'next/server';
 

@@ -1,4 +1,5 @@
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 import { query } from '@/lib/db';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
 import { NextResponse } from 'next/server';
